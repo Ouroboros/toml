@@ -383,12 +383,12 @@ func (p *parser) establishContext(key Key, array bool) {
 		// list of tables for it.
 		k := key[len(key)-1]
 		if _, ok := hashContext[k]; !ok {
-			hashContext[k] = make([]map[string]interface{}, 0, 5)
+			hashContext[k] = make([]interface{}, 0, 5)
 		}
 
 		// Add a new table. But make sure the key hasn't already been used
 		// for something else.
-		if hash, ok := hashContext[k].([]map[string]interface{}); ok {
+		if hash, ok := hashContext[k].([]interface{}); ok {
 			hashContext[k] = append(hash, make(map[string]interface{}))
 		} else {
 			p.panicf("Key '%s' was already created and cannot be used as "+
@@ -419,6 +419,10 @@ func (p *parser) setValue(key string, value interface{}) {
 			// The context is a table of hashes. Pick the most recent table
 			// defined as the current hash.
 			hash = t[len(t)-1]
+		case []interface{}:
+			// The context is a table of hashes. Pick the most recent table
+			// defined as the current hash.
+			hash = t[len(t)-1].(map[string]interface{})
 		case map[string]interface{}:
 			hash = t
 		default:
